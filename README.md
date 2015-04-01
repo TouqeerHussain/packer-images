@@ -12,4 +12,5 @@
 
 <pre>
 $ packer build CentOS-6.5.json
+$ packer build Ubuntu-12.04.4.json 
 </pre>
