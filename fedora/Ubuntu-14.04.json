@@ -1,0 +1,49 @@
+{
+  "variables": {
+        "ssh_name": "vagrant",
+        "ssh_pass": "vagrant"
+  },
+  "builders": [{
+    "type": "virtualbox-iso",
+    "virtualbox_version_file": ".vbox_version",
+    "headless": false,
+
+    "guest_os_type": "Ubuntu_64",
+    "disk_size": 81920,
+    "hard_drive_interface": "sata",
+
+    "iso_url": "http://releases.ubuntu.com/14.04/ubuntu-14.04-server-amd64.iso",
+    "iso_checksum": "4d94f6111b8fe47da94396180ce499d8c0bb44f3",
+    "iso_checksum_type": "sha1",
+
+    "boot_wait": "12s",
+
+    "http_directory": "http",
+    "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
+
+    "ssh_username": "{{user `ssh_name`}}",
+    "ssh_password": "{{user `ssh_pass`}}",
+    "ssh_port": 22,
+    "ssh_wait_timeout": "10000s",
+
+    "vboxmanage": [
+      ["modifyvm", "{{.Name}}", "--memory", "512"],
+      ["modifyvm", "{{.Name}}", "--cpus", "2"]
+    ],
+
+    "shutdown_command": "echo '{{user `ssh_name`}}'|sudo -S /sbin/halt -h -p"
+  }],
+  "post-processors": [{
+    "output": "build/Ubuntu-14.04.box",
+    "type": "vagrant"
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+    "scripts": [
+      "scripts/ubuntu14/vboxguest.sh",
+      "scripts/ubuntu14/vagrant.sh",
+      "scripts/ubuntu14/compact.sh"
+    ]
+  }]
+}
