@@ -1,0 +1,99 @@
+{
+  "provisioners": [{
+    "type": "shell",
+    "scripts": [
+      "scripts/base.sh",
+      "scripts/epel.sh",
+      "scripts/cleanup.sh",
+      "scripts/zerodisk.sh"
+    ],
+    "override": {
+      "fedora-21-vbox": {
+        "execute_command": "echo 'packer'|sudo -S sh '{{.Path}}'"
+      }
+    },
+    "only": ["fedora-21-vbox"]
+  }, {
+    "type": "shell",
+    "scripts": [
+      "scripts/base.sh",
+      "scripts/epel.sh",
+      "scripts/cloud.sh",
+      "scripts/cleanup.sh",
+      "scripts/zerodisk.sh"
+    ],
+    "override": {
+      "fedora-21-cloud-kvm": {
+        "execute_command": "sh '{{.Path}}'"
+      }
+    },
+    "only": ["fedora-21-cloud-kvm"]
+  }],
+  "builders": [{
+      "name": "fedora-21-vbox",
+      "type": "virtualbox-iso",
+      "boot_command": [
+        "<tab> append initrd=initrd.img inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/fedora/anaconda-ks.cfg<enter><wait>"
+      ],
+      "boot_wait": "10s",
+      "disk_size": 102400,
+      "guest_os_type": "RedHat_64",
+      "http_directory": "http",
+      "iso_checksum": "09a6b5d5aedac0e2827bdc78d2e18a73",
+      "iso_checksum_type": "md5",
+      "iso_url": "http://dl.fedoraproject.org/pub/fedora/linux/releases/21/Server/x86_64/iso/Fedora-Server-DVD-x86_64-21.iso",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "10000s",
+      "shutdown_command": "echo '/sbin/halt -h -p' > shutdown.sh; echo 'packer'|sudo -S sh 'shutdown.sh'",
+      "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
+      "virtualbox_version_file": ".vbox_version",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "480"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "1"
+        ]
+      ]
+    }, {
+      "name": "fedora-21-cloud-kvm",
+      "type": "qemu",
+      "iso_checksum": "09a6b5d5aedac0e2827bdc78d2e18a73",
+      "iso_checksum_type": "md5",
+      "iso_url": "http://dl.fedoraproject.org/pub/fedora/linux/releases/21/Server/x86_64/iso/Fedora-Server-DVD-x86_64-21.iso",
+      "ssh_wait_timeout": "30s",
+      "shutdown_command": "shutdown -P now",
+      "disk_size": 102400,
+      "format": "qcow2",
+      "headless": false,
+      "accelerator": "kvm",
+      "http_directory": "http",
+      "http_port_min": 10082,
+      "http_port_max": 10089,
+      "ssh_host_port_min": 2222,
+      "ssh_host_port_max": 2229,
+      "ssh_username": "root",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "90m",
+      "net_device": "virtio-net",
+      "disk_interface": "virtio",
+      "boot_command": [
+        "<tab> append initrd=initrd.img inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/fedora/anaconda-ks.cfg<enter><wait>"
+      ]
+    }],
+  "post-processors": [{
+    "type": "vagrant",
+    "compression_level": 1,
+    "keep_input_artifact": true,
+    "only": ["fedora-21-vbox"]
+  }]
+}
