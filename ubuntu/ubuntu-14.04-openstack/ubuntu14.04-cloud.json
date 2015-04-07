@@ -54,10 +54,8 @@
       ],
       "boot_wait": "10s",
       "disk_size": 40960,
-      "guest_os_type": "Ubuntu_64",
       "format": "qcow2",
       "headless": "false",
-      "acclerator": "kvm",
       "http_directory": "http",
       "iso_checksum": "83aabd8dcf1e8f469f3c72fff2375195",
       "iso_checksum_type": "md5",
@@ -68,11 +66,7 @@
       "ssh_wait_timeout": "10000s",
       "net_device": "virtio-net",
       "disk_interface": "virtio",
-      "shutdown_command": "echo 'shutdown -P now' > /tmp/shutdown.sh; echo 'vagrant'|sudo -S sh '/tmp/shutdown.sh'",
-      "vboxmanage": [
-        [ "modifyvm", "{{.Name}}", "--memory", "2048" ],
-        [ "modifyvm", "{{.Name}}", "--cpus", "2" ]
-      ]
+      "shutdown_command": "echo 'shutdown -P now' > /tmp/shutdown.sh; echo 'vagrant'|sudo -S sh '/tmp/shutdown.sh'"
     }
   ]
 }
