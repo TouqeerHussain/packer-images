@@ -19,6 +19,8 @@
   "post-processors": [
     {
       "type": "vagrant",
+      "compression_level": 1,
+      "keep_input_artifact": true,
       "override": {
         "virtualbox": {
           "output": "ubuntu-12-04-x64-virtualbox.box"
@@ -57,7 +59,7 @@
       "disk_size": 40960,
       "guest_os_type": "Ubuntu_64",
       "http_directory": "http",
-      "iso_url": "http://192.168.1.5:8000/ubuntu-12.04.5-server-amd64.iso",
+      "iso_url": "http://releases.ubuntu.com/12.04/ubuntu-12.04.5-server-amd64.iso",
       "iso_checksum": "af224223de99e2a730b67d7785b657f549be0d63221188e105445f75fb8305c9",
       "iso_checksum_type": "sha256",
       "ssh_username": "vagrant",
